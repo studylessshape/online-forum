@@ -14,8 +14,9 @@ use clap::Parser;
 async fn main() -> std::io::Result<()> {
     env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
 
-    log::info!("Read config file......");
     let args = ServeCommandArgs::parse();
+    
+    log::info!("Read config file......");
     *SERVER_CONFIGURATION.lock().unwrap() =
         match ServerConfiguration::read_or_create(SERVER_CONFIGURATION_PATH) {
             Ok(conf) => conf,
