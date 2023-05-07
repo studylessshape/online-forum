@@ -1,0 +1,161 @@
+.user-button {
+    background-image: url("/img/avatar.svg");
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.bg-brand {
+    --bs-bg-opacity: 1;
+    background-image: linear-gradient(to top, #e6e9f0 0%, #eef1f5 100%);
+}
+
+.link {
+    text-decoration: none;
+    position: relative;
+    display: block;
+    text-decoration: none;
+    color: #3a3a3a;
+}
+
+.link:hover,
+.link:focus {
+    color: inherit;
+}
+
+.post-summary {
+    font-size: medium;
+    overflow: hidden;
+    overflow-y: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: gray;
+}
+
+.post-summary-time {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+main,
+main>.container {
+    padding: 60px 15px 0;
+}
+
+.wh-2 {
+    width: 2rem;
+    height: 2rem;
+}
+
+.wh-1 {
+    width: 1rem;
+    height: 1rem;
+}
+
+.wh-em-2 {
+    width: 2em;
+    height: 2em;
+}
+
+.wh-em-1 {
+    width: 1em;
+    height: 1em;
+}
+
+.text-darkgray {
+    color: darkgray;
+}
+
+blockquote {
+    color: darkgray;
+    padding-left: 2px;
+    border-left: 3px solid rgba(128, 128, 128, 0.5);
+}
+
+.fixed-br {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    z-index: 1030;
+}
+
+.add-button {
+    height: 50px;
+    width: 50px;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+.avatar-profiles {
+    width: 180px;
+    height: 180px;
+    clip-path: circle(50%);
+    overflow: hidden;
+    line-height: 1;
+    object-fit: cover;
+}
+
+.section-avatar {
+    width: 28px;
+    height: 28px;
+    clip-path: circle(50%);
+    overflow: hidden;
+    object-fit: cover;
+}
+
+.post-avatar {
+    width: auto;
+    height: 50px;
+    clip-path: circle(50%);
+    overflow: hidden;
+    object-fit: cover;
+}
+
+.router-link-active {
+  color: var(--bs-nav-tabs-link-active-color);
+  background-color: var(--bs-nav-tabs-link-active-bg);
+  border-color: var(--bs-nav-tabs-link-active-border-color);
+}
+
+.link-normal {
+    text-decoration: none;
+    transition-duration: 0.2s;
+    color: #339999;
+}
+
+.link-normal:hover {
+    text-decoration: underline;
+    color: #666699;
+}
+
+.link-normal::before {
+    content: "□";
+    padding-right: 0.5rem;
+    text-decoration: none;
+}
+
+.link-normal:hover::before {
+    content: "■";
+    text-decoration: none !important;
+}
+
+article > h1:nth-child(1) {
+    margin-top: 0.4em !important;
+}
+
+.time-display {
+    white-space: nowrap;
+    word-wrap: break-word;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.button-link {
+    text-decoration: none;
+    margin-left: 10px;
+    margin-right: 10px;
+    height: 20px;
+    width: fit-content;
+}
