@@ -316,7 +316,7 @@ impl UserPasswordUpdateRequest {
             Ok(c) => c,
             Err(dao_err) => match dao_err.0 {
                 DaoErrorCode::NotFound => return Err(DaoError::message("验证码不正确")),
-                _=>return Err(dao_err),
+                _ => return Err(dao_err),
             },
         };
         // delete code after verify
@@ -324,10 +324,7 @@ impl UserPasswordUpdateRequest {
             return Err(err);
         }
         // get user database
-        let mut user = DaoError::from_mysql_res_opt_some(UserDb::get((
-            "email=:email",
-            params! {"email"=>&self.email},
-        )))?;
+        let mut user = UserDb::get(("email=:email", params! {"email"=>&self.email}))?;
         // update password
         match user.update_password(&self.password) {
             Ok(_) => Ok(()),
@@ -421,7 +418,7 @@ impl UserDb {
         )
     }
     /// `condition.0` is the string after `where` in sql sentence
-    pub fn get(condition: (&str, Params)) -> Result<Option<Self>> {
+    pub fn get(condition: (&str, Params)) -> StdResult<Self, DaoError> {
         let (condition, param) = condition;
         let mut conn = get_conn();
 
@@ -432,7 +429,7 @@ impl UserDb {
             condition
         );
 
-        conn.exec_first(sql, param).map(Self::map)
+        DaoError::from_mysql_res_opt_some(conn.exec_first(sql, param).map(Self::map))
     }
 
     pub fn update_nickname(&mut self, new_name: &str) -> Result<&mut Self> {

@@ -24,16 +24,20 @@ pub async fn get_profiles(user_name: web::Query<UserNameRequest>) -> impl Respon
     ));
 
     match user_res {
-        Ok(Some(user)) => HttpResponse::Ok().json(json!({
+        Ok(user) => HttpResponse::Ok().json(json!({
             "avatar": user.avatar,
             "user_nickname": user.user_nickname,
             "regist_time":user.regist_time,
             "description":user.description
         })),
-        Ok(None) => HttpResponse::Ok().json(json!({"responseText":"未找到用户"})),
         Err(err) => {
             log::error!("user_profiles.rs | get_profiles | {:?}", err);
-            HttpResponse::Ok().json(json!({"responseText":"发生错误"}))
+            match err.kind() {
+                DaoErrorCode::NotFound => {
+                    HttpResponse::Ok().json(json!({"responseText":"未找到用户"}))
+                }
+                _ => HttpResponse::Ok().json(json!({"responseText":"发生错误"})),
+            }
         }
     }
 }
@@ -53,18 +57,20 @@ pub async fn update_avatar(
     let user_res = UserDb::get(("token=:token", params! {"token"=>token}));
 
     match user_res {
-        Ok(None) => HttpResponse::Ok()
-            .json(json!({"avatar": None as Option<()>, "responseText":"未找到用户"})),
         Err(err) => {
             log::error!(
                 "user_profiles.rs | update_avatar | Get user ouccr error | {:?}",
                 err
             );
-            HttpResponse::Ok()
-                .json(json!({"avatar": None as Option<()>, "responseText":"发生错误"}))
+            match err.kind() {
+                DaoErrorCode::NotFound => HttpResponse::Ok()
+                    .json(json!({"avatar": None as Option<()>, "responseText":"未找到用户"})),
+                _ => HttpResponse::Ok()
+                    .json(json!({"avatar": None as Option<()>, "responseText":"发生错误"})),
+            }
         }
         // save avatar file
-        Ok(Some(mut user)) => match save_net_file(file_name.into_inner(), _multipart).await {
+        Ok(mut user) => match save_net_file(file_name.into_inner(), _multipart).await {
             Err(err) => {
                 log::error!(
                     "user_profiles.rs | update_avatar | Save file ouccr error | {:?}",
@@ -103,12 +109,16 @@ pub async fn update_nickname(
     let user_res = UserDb::get(("token=:token", params! {"token"=>token}));
 
     match user_res {
-        Ok(None) => HttpResponse::Ok().json(json!({"responseText":"未找到用户"})),
         Err(err) => {
             log::error!("user_profiles.rs | update_nickname | {:?}", err);
-            HttpResponse::Ok().json(json!({"responseText":"发生错误"}))
+            match err.kind() {
+                DaoErrorCode::NotFound => {
+                    HttpResponse::Ok().json(json!({"responseText":"未找到用户"}))
+                }
+                _ => HttpResponse::Ok().json(json!({"responseText":"发生错误"})),
+            }
         }
-        Ok(Some(mut user)) => {
+        Ok(mut user) => {
             // update user avatar
             if let Err(err) = user.update_nickname(&new_value.into_inner().user_nickname) {
                 log::error!("Update Avatar Error | {:?}", err);
@@ -137,12 +147,16 @@ pub async fn update_profiles(
     let user_res = UserDb::get(("token=:token", params! {"token"=>token}));
 
     match user_res {
-        Ok(None) => HttpResponse::Ok().json(json!({"responseText":"未找到用户"})),
         Err(err) => {
             log::error!("user_profiles.rs | update_profiles | {:?}", err);
-            HttpResponse::Ok().json(json!({"responseText":"发生错误"}))
+            match err.kind() {
+                DaoErrorCode::NotFound => {
+                    HttpResponse::Ok().json(json!({"responseText":"未找到用户"}))
+                }
+                _ => HttpResponse::Ok().json(json!({"responseText":"发生错误"})),
+            }
         }
-        Ok(Some(mut user)) => match user
+        Ok(mut user) => match user
             .update_nickname_description(&new_profiles.user_nickname, &new_profiles.description)
         {
             Ok(user) => HttpResponse::Ok().json(json!({

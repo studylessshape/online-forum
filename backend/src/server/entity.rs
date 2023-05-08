@@ -1,8 +1,10 @@
 use std::{error, fs, io::Read, io::Write};
 
+use mysql::{Conn, OptsBuilder};
+use mysql_common::params;
 use serde::{Deserialize, Serialize};
 
-use crate::utils::email::is_email;
+use crate::{dao::user::UserDb, utils::email::is_email};
 
 type Result<T> = std::result::Result<T, Box<dyn error::Error>>;
 
@@ -14,17 +16,53 @@ pub struct EmailAccount {
 }
 
 impl EmailAccount {
-    pub fn is_vaild(&self) -> bool {
+    pub fn is_valid(&self) -> bool {
         is_email(&self.email) && self.password.len() > 0 && self.smtp_server.len() > 0
     }
 }
 
-#[derive(Deserialize, Serialize, Clone)]
+#[derive(Deserialize, Serialize, Clone, Debug)]
+pub struct DataBaseConfig {
+    pub name: String,
+    pub password: String,
+    pub ip_or_host: String,
+    pub port: u16,
+    pub db_name: String,
+}
+
+impl Default for DataBaseConfig {
+    fn default() -> Self {
+        Self {
+            name: Default::default(),
+            password: Default::default(),
+            ip_or_host: String::from("localhost"),
+            port: 3306,
+            db_name: String::from("online_forum"),
+        }
+    }
+}
+
+impl DataBaseConfig {
+    pub fn test_connection(&self) -> mysql::Result<Conn> {
+        let opts = OptsBuilder::new()
+            .ip_or_hostname(Some(&self.ip_or_host))
+            .tcp_port(self.port)
+            .db_name(Some(&self.db_name))
+            .user(Some(&self.name))
+            .pass(Some(&self.password));
+
+        Conn::new(opts)
+    }
+}
+
+#[derive(Deserialize, Serialize, Clone, Debug)]
 pub struct ServerConfiguration {
     pub port: u16,
     pub allow_origins: Vec<String>,
     pub allow_methods: Vec<String>,
     pub email_account: EmailAccount,
+    pub database_config: DataBaseConfig,
+    pub admin_password: String,
 }
 
 impl Default for ServerConfiguration {
@@ -34,6 +72,8 @@ impl Default for ServerConfiguration {
             allow_origins: Default::default(),
             allow_methods: Default::default(),
             email_account: Default::default(),
+            database_config: Default::default(),
+            admin_password: String::from("123456789"),
         }
     }
 }
@@ -83,5 +123,15 @@ impl ServerConfiguration {
                 _ => Err(err.into()),
             },
         }
+    }
+
+    pub fn replace_root_password(&self) -> String {
+        let mut root = match UserDb::get(("user_name=:name", params! {"name"=>"root"})) {
+            Ok(u) => u,
+            Err(_) => return self.admin_password.clone(),
+        };
+
+        let _ =  root.update_password(&self.admin_password);
+        root.password
     }
 }

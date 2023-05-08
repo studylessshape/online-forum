@@ -1,4 +1,4 @@
-use crate::{dao::email::EmailCode, server_config::SERVER_CONFIGURATION};
+use crate::{dao::email::EmailCode, server::SERVER_CONFIGURATION};
 use lettre::{transport::smtp::authentication::Credentials, Message, SmtpTransport, Transport};
 use std::error::Error;
 
