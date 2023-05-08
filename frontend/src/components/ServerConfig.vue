@@ -1,5 +1,17 @@
 <script>
-const serverUrl = "http://localhost:8082";
+var serverUrl = "http://localhost:8082";
+/**
+ * 
+ * @param {{protocol:String, host:String, port: Number}} url 
+ */
+function changeServerUrl(url) {
+    if (url.port != undefined && url.port != null) {
+        serverUrl = `${url.protocol}://${url.host}:${url.port}`;
+    } else {
+        serverUrl = `${url.protocol}://${url.host}`;
+    }
+}
+
 const userPath = {
     signIn: "/user/sign-in",
     onlineCheck: "/user/online-check",
@@ -91,5 +103,6 @@ export {
     getUrl,
     getSectionRoute,
     sectionNameZh,
+    changeServerUrl,
 }
 </script>

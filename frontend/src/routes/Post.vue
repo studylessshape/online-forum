@@ -84,7 +84,7 @@ export default {
         .catch((err) => {
           ElMessage.error(err);
         });
-        this.elLoading = false;
+      this.elLoading = false;
     },
     deletePost() {
       $("#post-del-modal").modal("hide");
@@ -406,9 +406,9 @@ export default {
     <div v-else-if="!isLoaded && !elLoading">
       <el-result icon="error" title="帖子可能被删除" sub-title="Code：404">
         <template #extra>
-            <el-button type="primary" @click="$router.back()">返回</el-button>
+          <el-button type="primary" @click="$router.back()">返回</el-button>
         </template>
-    </el-result>
+      </el-result>
     </div>
   </el-main>
 </template>

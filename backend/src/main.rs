@@ -15,7 +15,7 @@ async fn main() -> std::io::Result<()> {
     env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
 
     let args = ServeCommandArgs::parse();
-    
+
     log::info!("Read config file......");
     *SERVER_CONFIGURATION.lock().unwrap() =
         match ServerConfiguration::read_or_create(SERVER_CONFIGURATION_PATH) {
@@ -41,43 +41,51 @@ async fn main() -> std::io::Result<()> {
     }
 
     server_config.port = args.port;
-    if args.origins.len() > 0 {
-        server_config.allow_origins = args.origins;
+    if args.origins.is_some() {
+        server_config.allow_origins = args.origins.unwrap();
     }
-    if args.methods.len() > 0 {
-        server_config.allow_methods = args.methods;
+    if server_config.allow_origins.len() == 0 {
+        log::warn!("Allow all origin will not accpet any credentials!");
+    }
+    if args.methods.is_some() {
+        server_config.allow_methods = args.methods.unwrap();
     }
     log::info!("Config server......");
     server_run(server_config).await
 }
 
 async fn server_run(server_config: ServerConfiguration) -> std::io::Result<()> {
+    let port = server_config.port;
+    let address = get_local_addr().unwrap().ip();
+
     log::info!(
-        "Start server on http://{}:{}",
-        get_local_addr().unwrap().ip(),
-        server_config.port
+        "Start server on http://{}:{} (public) and http://localhost:{} (local)",
+        address,
+        port,
+        port
     );
 
     HttpServer::new(move || {
+        let cors = config_corsss(&server_config);
         App::new()
             // add cors
-            .wrap(config_corsss(&server_config))
+            .wrap(cors)
             // config action
             .configure(config_all_action)
             // add middle ware
             .wrap(middleware::NormalizePath::trim())
             .wrap(middleware::Logger::default())
     })
-    .bind(("127.0.0.1", 8082))?
+    // bind local host
+    .bind(("127.0.0.1", port))?
+    // bind server ip
+    .bind((address, port))?
     .run()
     .await
 }
 
 pub fn config_corsss(server_config: &ServerConfiguration) -> Cors {
-    let mut cors = Cors::default()
-        .allow_any_header()
-        .supports_credentials()
-        .max_age(3600);
+    let mut cors = Cors::default().allow_any_header().max_age(3600);
 
     cors = if server_config.allow_origins.len() > 0 {
         for origin in server_config.allow_origins.iter() {
@@ -86,7 +94,8 @@ pub fn config_corsss(server_config: &ServerConfiguration) -> Cors {
         cors
     } else {
         cors.allow_any_origin()
-    };
+    }
+    .supports_credentials();
 
     if server_config.allow_methods.len() > 0 {
         cors.allowed_methods(

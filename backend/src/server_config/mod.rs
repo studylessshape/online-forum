@@ -15,10 +15,10 @@ pub struct ServeCommandArgs {
     pub port: u16,
     /// Allow orign, default is allow any orign
     #[arg(short, long)]
-    pub origins: Vec<String>,
+    pub origins: Option<Vec<String>>,
     /// Allow method, Default is allow any method
     #[arg(short, long)]
-    pub methods: Vec<String>,
+    pub methods: Option<Vec<String>>,
 }
 
 pub static SERVER_CONFIGURATION: Lazy<Mutex<ServerConfiguration>> =
