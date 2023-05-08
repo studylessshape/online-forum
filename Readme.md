@@ -10,6 +10,11 @@
 ## 后端
 - [rust](https://www.rust-lang.org/zh-CN/)：主要使用了 [actix-web](https://actix.rs/) 框架，其他用到的都在 [cargo.toml](./backend/Cargo.toml) 里
 
+## 数据库
+数据库使用的 [mysql](https://www.mysql.com/cn/)。
+
+样例数据库表和数据的导入请运行 [database.sql](./doc/database.sql)。
+
 ## 前后端交互
 使用跨域通信
 
@@ -33,6 +38,8 @@ port = 8082
 allow_origins = []
 # 跨域请求允许的方法，设置为 `[]` 为允许所有请求方法
 allow_methods = ["GET", "POST"]
+# 设置管理员账户的密码
+admin_password = "123456789"
 
 [email_account]
 # 用户注册、更改密码、忘记密码时，会用一个邮箱来给用户发送验证码，此处配置的是能够通过 SMTP 服务器发送邮箱的账户和密码
@@ -40,6 +47,18 @@ allow_methods = ["GET", "POST"]
 email = ""
 password = ""
 smtp_server = "smtp.office365.com"
+
+# 数据库使用的是 mysql
+[database_config]
+# 数据库登录账户和密码
+name = ""
+password = ""
+# 数据库所在 ip 或域名
+ip_or_host = "localhost"
+# 端口
+port = 3306
+# 使用的数据库名
+db_name = "online_forum"
 ```
 
 **注意：**
@@ -51,6 +70,7 @@ smtp_server = "smtp.office365.com"
 port = 8082
 allow_origins = ["http://localhost:5173"]
 allow_methods = ["GET", "POST"]
+admin_password = "123456789"
 
 [email_account]
 email = "*@outlook.com"
@@ -67,8 +87,12 @@ window.server = {
     // 服务器使用的协议
     protocol: "http",
     // 服务器地址或域名
-    host: "192.168.187.24",
+    host: "localhost",
     // 服务器端口，可以为 null
     port: 8082,
 };
 ```
+
+**注意：**
+
+后端对外域来源非常敏感，如果后端配置的外域为地址或域名为 `localhost`，而前端配置的 `host` 为本机的 ip 地址（即非 `localhost` 和 `127.0.0.1`），那么后端在收到跨域请求时，容易出现无法得到 `Cookie` 的情况。

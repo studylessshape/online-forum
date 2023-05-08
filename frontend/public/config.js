@@ -1,5 +1,5 @@
 window.server = {
     protocol: "http",
-    host: "192.168.187.24",
+    host: "localhost",
     port: 8082,
 };
