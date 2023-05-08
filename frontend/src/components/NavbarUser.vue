@@ -211,7 +211,6 @@ export default {
                 return response.json();
             })
                 .then(data => {
-                    console.log(data.user);
                     if (data.user) {
                         // 注册成功，通过返回的数据设置 Cookie
                         cookieWatch.setCookie(cookieName.username, data.user.user_name);

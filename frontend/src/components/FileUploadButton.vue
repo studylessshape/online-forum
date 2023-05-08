@@ -45,7 +45,6 @@ export default {
                 })
                     .then(response => response.json())
                     .then(data => {
-                        console.log(data);
                         if (data.src)
                             this.$emit("after-upload", data.src);
                     })
