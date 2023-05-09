@@ -191,9 +191,9 @@ export default {
 </script>
 
 <template>
-    <div class="floating-tab d-flex">
+    <div class="floating-tab d-flex main-body">
         <el-main class="floating-tab-content">
-            <div ref="verifyPanel" :class="['anim', { 'to-left-fade': isVerifyCode }]">
+            <div ref="verifyPanel" :class="['anim', { 'to-left-fade': isVerifyCode }, 'bg-body', 'px-3', 'py-3', 'rounded', 'shadow']">
                 <fieldset :disabled="isVerifyCode || isInVerify">
                     <div class="row justify-content-center">
                         <h3 class="col text-center">忘记密码</h3>
@@ -228,7 +228,7 @@ export default {
                     </div>
                 </fieldset>
             </div>
-            <div :class="['anim', 'hidden', { 'show-new-password': isVerifyCode }]" ref="setNewPasswordPanel">
+            <div :class="['anim', 'hidden', { 'show-new-password': isVerifyCode }, 'bg-body', 'px-3', 'py-3', 'rounded', 'shadow']" ref="setNewPasswordPanel">
                 <fieldset :disabled="!isVerifyCode || isInSetPassword">
                     <div class="row justify-content-center">
                         <h3 class="col text-center">设置新密码</h3>
@@ -348,5 +348,9 @@ fieldset[disabled] {
         opacity: 0;
         visibility: hidden;
     }
+}
+
+.main-body {
+  background-image: linear-gradient(-20deg, #6e45e2 0%, #88d3ce 100%);
 }
 </style>

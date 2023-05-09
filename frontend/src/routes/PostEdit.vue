@@ -180,9 +180,9 @@ export default {
 </script>
 
 <template>
-  <div class="flex-column">
+  <div class="flex-column mt-3">
     <el-container v-loading="loading">
-      <el-main>
+      <el-main class="p-5 m-5 mt-3 rounded shadow bg-body">
         <div>
           <h4 class="text-center">
             帖子{{ editMode == "add" ? "添加" : "编辑" }}

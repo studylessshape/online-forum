@@ -7,8 +7,8 @@ export default {
 }
 </script>
 <template>
-    <div class="container card-footer pt-3">
-        <footer class="py-3 my-3">
+    <div class="container card-footer pt-3 footer">
+        <footer class="py-3 mt-3 color-auto">
             <ul class="nav justify-content-center border-bottom pb-3 mb-3">
                 <li class="nav-item"><RouterLink to="/" class="nav-link px-2 text-muted">首页</RouterLink></li>
                 <li class="nav-item"><RouterLink to="/section/notify" class="nav-link px-2 text-muted">论坛通告</RouterLink></li>
@@ -21,3 +21,12 @@ export default {
         </footer>
     </div>
 </template>
+
+<style>
+.footer {
+    margin-top: auto;
+}
+.color-auto {
+    mix-blend-mode: difference;
+}
+</style>

@@ -239,9 +239,9 @@ export default {
 </script>
 
 <template>
-  <el-main class="container pt-3" v-loading="elLoading" element-loading-background="rgba(122, 122, 122, 0.8)">
+  <el-main class="container pt-3 el-p-0" v-loading="elLoading" element-loading-background="rgba(122, 122, 122, 0.8)">
     <div v-if="isLoaded">
-      <nav aria-label="breadCrumb" class="my-2 ps-2">
+      <nav aria-label="breadCrumb" class="my-2 ps-2 color-auto">
         <ol class="breadcrumb">
           <li class="breadcrumb-item">
             <RouterLink to="/">首页</RouterLink>
@@ -342,7 +342,7 @@ export default {
         <!-- 帖子评论 -->
         <div :key="comments">
           <div v-if="comments.length > 0" v-for="comment in comments">
-            <el-row class="border border-2 rounded pt-3 ps-2 pb-2 pe-3 mb-2">
+            <el-row class="border border-2 rounded pt-3 ps-2 pb-2 pe-3 mb-2 bg-body">
               <el-col :md="2" class="border-bottom border-2">
                 <RouterLink :to="'/user/user-profiles/' + comment.user.user_name" class="link">
                   <el-row class="justify-content-center"><img
@@ -412,3 +412,12 @@ export default {
     </div>
   </el-main>
 </template>
+
+<style>
+.color-auto {
+    mix-blend-mode: difference;
+}
+.el-p-0 {
+  --el-main-padding: 0;
+}
+</style>

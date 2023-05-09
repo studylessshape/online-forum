@@ -301,11 +301,11 @@ export default {
 </script>
 
 <template>
-    <el-main class="w-100">
+    <el-main class="w-100 mt-1" style="flex-grow: 1;">
         <el-tabs v-model="tabActive" tab-position="left" @tab-change="onTabsChange"
-            class="pt-4 pb-4 ps-0 pe-0 ps-sm-4 pe-sm-4 border border-2 rounded rounded-2" type="card">
+            class="pt-4 pb-4 ps-0 pe-0 ps-sm-4 pe-sm-4 border border-2 rounded rounded-2 bg-body shadow" type="card">
             <!-- 用户资料 -->
-            <el-tab-pane name="user-profile" style="display: flex;">
+            <el-tab-pane name="user-profile" style="display: flex; height: 100%;">
                 <template #label>
                     <el-icon title="用户资料">
                         <User />
@@ -374,8 +374,8 @@ export default {
                         </el-divider>
                     </div>
                     <div class="row">
-                        <el-form label-width="80px" @submit="()=>{}">
-                            <el-form-item label="用户昵称">
+                        <el-form label-width="40px" @submit="()=>{}">
+                            <el-form-item label="昵称">
                                 <el-input v-model="newNickname" placeholder="请输入昵称" minlength="3" maxlength="20"
                                     show-word-limit required />
                             </el-form-item>
@@ -397,7 +397,7 @@ export default {
                         <Lock />
                     </el-icon>
                 </template>
-                <el-main>
+                <el-main class="ps-0">
                     <el-form label-width="80px" v-loading="isPasswordInUpdate" @submit="()=>{}">
                         <input type="email" style="opacity: 0;position:absolute;width:0;height:0;" autocomplete="username">
                         <input type="password" style="opacity: 0;position:absolute;width:0;height:0;"
@@ -436,7 +436,7 @@ export default {
                         <Tickets />
                     </el-icon>
                 </template>
-                <el-table :data="userPosts" v-loading="isUserPostsTableLoading" max-height="360" stripe border
+                <el-table :data="userPosts" v-loading="isUserPostsTableLoading" max-height="360" stripe border empty-text="暂无帖子"
                     @selection-change="onPostsTableSelectionChange">
                     <el-table-column type="selection" width="40" fixed />
                     <el-table-column prop="post_title" label="标题" width="200">
@@ -528,5 +528,9 @@ input::-webkit-inner-spin-button {
 input::-webkit-outer-spin-button {
     -webkit-appearance: none !important;
 
+}
+
+.color-auto {
+    mix-blend-mode: difference;
 }
 </style>

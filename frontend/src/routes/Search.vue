@@ -118,12 +118,12 @@ export default {
                 @keyup.enter.native="onSearch" name="search-field" autocomplete='off' />
         </div>
         <div>
-            <el-collapse v-model="searchCollapseName">
+            <el-collapse v-model="searchCollapseName" class="query-condition-bg">
                 <el-collapse-item :disabled="isInSearching" name="searchOptions">
                     <template #title>
-                        <strong>搜索条件选择</strong>
+                        <strong class="mx-2">搜索条件选择</strong>
                     </template>
-                    <div>
+                    <div class="mx-2">
                         <div>搜索部分选择：</div>
                         <el-checkbox-group v-model="checkedPostParts" :min="1">
                             <el-checkbox v-for="part in searchPostParts" :label="part" :key="part" border>
@@ -131,7 +131,7 @@ export default {
                             </el-checkbox>
                         </el-checkbox-group>
                     </div>
-                    <div>
+                    <div class="mx-2">
                         <div>论坛板块选择：</div>
                         <el-checkbox-group v-model="checkedSections" :min="1">
                             <el-checkbox v-for="section in searchSections" :label="section" :key="section" border>
