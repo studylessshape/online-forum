@@ -80,9 +80,9 @@ CREATE TABLE `comment_table` (
 
 -- insert auth
 
-INSERT INTO online_forum.user_authority (auth_level, auth_name) VALUES(1, '系统');
-INSERT INTO online_forum.user_authority (auth_level, auth_name) VALUES(2, '管理员');
-INSERT INTO online_forum.user_authority (auth_level, auth_name) VALUES(3, '用户');
+INSERT INTO online_forum.user_authority (auth_level, auth_name) VALUES(1, '管理员');
+INSERT INTO online_forum.user_authority (auth_level, auth_name) VALUES(2, '用户');
+INSERT INTO online_forum.user_authority (auth_level, auth_name) VALUES(3, '游客');
 
 -- insert post section
 
