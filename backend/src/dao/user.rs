@@ -6,9 +6,9 @@ use uuid::Uuid;
 
 use super::{
     connect::get_conn,
-    dao_error::{DaoError, DaoErrorCode},
+    dao_error::{DaoError, DaoErrorCode, DaoResult},
     email::EmailCode,
-    ConditionFor,
+    get_value, ConditionFor,
 };
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -138,7 +138,7 @@ impl UserSignUpInfo {
                         "name"=>&self.user_name,
                         "password" => &self.password,
                         "regist_time"=>Local::now().naive_local(),
-                        "auth_id"=>3,
+                        "auth_id"=>2,
                     },
                 );
                 // return the data of user from database
@@ -195,7 +195,7 @@ impl TryFrom<Box<dyn ConditionFor<UserSummary>>> for UserSummary {
     /// Though the condition from param to search in database. Then get the object back to UserSummary
     fn try_from(
         value: Box<dyn ConditionFor<UserSummary>>,
-    ) -> std::result::Result<Self, Self::Error> {
+    ) -> StdResult<Self, Self::Error> {
         // get connect with mysql
         let mut conn = get_conn();
 
@@ -310,7 +310,7 @@ pub struct UserPasswordUpdateRequest {
 }
 
 impl UserPasswordUpdateRequest {
-    pub fn update_password(&self) -> StdResult<(), DaoError> {
+    pub fn update_password(&self) -> DaoResult<()> {
         // verify email code
         let mut code = match EmailCode::query_code(&self.email, Some(self.code)) {
             Ok(c) => c,
@@ -418,7 +418,7 @@ impl UserDb {
         )
     }
     /// `condition.0` is the string after `where` in sql sentence
-    pub fn get(condition: (&str, Params)) -> StdResult<Self, DaoError> {
+    pub fn get(condition: (&str, Params)) -> DaoResult<Self> {
         let (condition, param) = condition;
         let mut conn = get_conn();
 
@@ -541,5 +541,111 @@ impl UserDb {
             }
             Err(err) => Err(err),
         }
+    }
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct UsersInfoForManage {
+    pub user_id: u32,
+    pub user_name: String,
+    pub user_nickname: Option<String>,
+    pub avatar: Option<String>,
+    pub regist_time: NaiveDateTime,
+    pub lastest_sign: Option<NaiveDateTime>,
+    pub lastest_post_time: Option<NaiveDateTime>,
+    pub post_count: u32,
+    pub lastest_comment_time: Option<NaiveDateTime>,
+    pub comment_count: u32,
+}
+
+impl FromRow for UsersInfoForManage {
+    fn from_row_opt(row: Row) -> StdResult<Self, FromRowError>
+    where
+        Self: Sized,
+    {
+        if row.len() < 10 {
+            return Err(FromRowError(row));
+        }
+
+        Ok(Self {
+            user_id: get_value(&row[0], &row)?,
+            user_name: get_value(&row[1], &row)?,
+            user_nickname: get_value(&row[2], &row)?,
+            avatar: get_value(&row[3], &row)?,
+            regist_time: get_value(&row[4], &row)?,
+            lastest_sign: get_value(&row[5], &row)?,
+            lastest_post_time: get_value(&row[6], &row)?,
+            post_count: get_value(&row[7], &row)?,
+            lastest_comment_time: get_value(&row[8], &row)?,
+            comment_count: get_value(&row[9], &row)?,
+        })
+    }
+}
+
+impl UsersInfoForManage {
+    pub fn get_all() -> DaoResult<Vec<Self>> {
+        let mut conn = get_conn();
+
+        let sql = r"select
+                ut.user_id,
+                ut.user_name,
+                ut.user_nickname,
+                ut.avatar,
+                ut.regist_time,
+                ut.lastest_sign,
+                max(pt.post_time) lastest_post_time,
+                count(pt.post_id) post_count,
+                cut.lastest_comment_time,
+                ifnull(cut.comment_count, 0) 
+            from
+                user_table ut
+            left join post_table pt on
+                pt.user_id = ut.user_id
+            left join (
+                select
+                    ct.user_id,
+                    max(ct.comment_time) lastest_comment_time,
+                    count(ct.comment_id) comment_count
+                from
+                    comment_table ct
+                group by ct.user_id) cut on
+                cut.user_id=ut.user_id 
+            where ut.user_name != 'root'
+            group by
+                ut.user_id
+            order by
+                ut.user_id asc";
+
+        DaoError::from_mysql_res(conn.query(sql))
+    }
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct UserIds {
+    pub user_id: Vec<u32>,
+}
+
+impl UserIds {
+    pub fn del_users(&self) -> DaoResult<()>{
+        let mut conn = get_conn();
+
+        let user_conditions = match self.user_id.len() == 0 {
+            true => return Err(DaoError::message("No user ids!")),
+            false => {
+                let mut cdt = String::new();
+                for (idx, user_id) in self.user_id.iter().enumerate() {
+                    if idx < self.user_id.len() - 1 {
+                        cdt.push_str(format!("user_id={} or ", user_id).as_str());
+                    } else {
+                        cdt.push_str(format!("user_id={}", user_id).as_str());
+                    }
+                }
+                cdt
+            },
+        };
+
+        let sql = format!(r"DELETE FROM user_table WHERE ({}) and user_name != 'root'", user_conditions);
+
+        DaoError::from_mysql_res(conn.query_drop(sql))
     }
 }

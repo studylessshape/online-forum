@@ -6,7 +6,9 @@ use mysql::{
 };
 use serde::{Deserialize, Serialize};
 
-use super::{connect::get_conn, dao_error::DaoError, get_value, user::UserSimplify};
+use super::{
+    connect::get_conn, dao_error::DaoError, get_value, section::SectionName, user::UserSimplify,
+};
 
 /// Include author info
 #[derive(Debug, Deserialize, Serialize)]
@@ -369,7 +371,7 @@ impl From<PostDb> for PostSimplify {
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct DelPostsRequest {
-    pub all_post_id: Vec<i32>,
+    pub post_id: Vec<i32>,
 }
 
 impl DelPostsRequest {
@@ -378,8 +380,8 @@ impl DelPostsRequest {
 
         let mut id_clause = String::new();
 
-        for (idx, post_id) in self.all_post_id.iter().enumerate() {
-            if idx != self.all_post_id.len() - 1 {
+        for (idx, post_id) in self.post_id.iter().enumerate() {
+            if idx != self.post_id.len() - 1 {
                 id_clause.push_str(&format!("post_id={} or ", post_id));
             } else {
                 id_clause.push_str(&format!("post_id={}", post_id));
@@ -396,6 +398,29 @@ impl DelPostsRequest {
 
         DaoError::from_mysql_res(conn.exec_drop(sql, param))
     }
+
+    /// This method with no token, for forum manage request.
+    pub fn del_posts_manage(&self) -> Result<(), DaoError> {
+        let mut conn = get_conn();
+
+        let mut id_clause = String::new();
+
+        for (idx, post_id) in self.post_id.iter().enumerate() {
+            if idx != self.post_id.len() - 1 {
+                id_clause.push_str(&format!("post_id={} or ", post_id));
+            } else {
+                id_clause.push_str(&format!("post_id={}", post_id));
+            }
+        }
+
+        let sql = format!(
+            r"DELETE FROM post_table
+            WHERE {}",
+            id_clause
+        );
+
+        DaoError::from_mysql_res(conn.query_drop(sql))
+    }
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -406,7 +431,19 @@ pub struct PostSearchRequest {
     pub section_name: Vec<String>,
 }
 
+impl From<SectionName> for PostSearchRequest {
+    fn from(value: SectionName) -> Self {
+        Self {
+            keywords: String::new(),
+            title: false,
+            content: false,
+            section_name: vec![value.section_name],
+        }
+    }
+}
+
 impl PostSearchRequest {
+    /// Use for search all post by keywords. If only need all section posts, see [`PostSearchRequest::section_posts`]
     pub fn search(&self) -> Result<Vec<PostSearchResult>, DaoError> {
         let mut conn = get_conn();
         // if `section_name.len() > 0`, will create conditon for sectoin_name
@@ -423,7 +460,7 @@ impl PostSearchRequest {
             }
             t_str
         };
-        
+
         let sql = format!(
             r"select
                 pt.post_id,
@@ -461,13 +498,67 @@ impl PostSearchRequest {
             section_condition
         );
 
-        let param = params! { 
+        let param = params! {
             "keywords"=> format!("%{}%", self.keywords),
             "is_title"=> self.title,
             "is_content"=> self.content,
         };
 
         DaoError::from_mysql_res(conn.exec(sql, param))
+    }
+
+    /// Get all posts of section
+    pub fn section_posts(&self) -> Result<Vec<PostSearchResult>, DaoError> {
+        let mut conn = get_conn();
+        // if `section_name.len() > 0`, will create conditon for sectoin_name
+        let section_condition = if self.section_name.len() == 0 {
+            String::from("true")
+        } else {
+            let mut t_str = String::new();
+            for (idx, section_name) in self.section_name.iter().enumerate() {
+                if idx == self.section_name.len() - 1 {
+                    t_str.push_str(&format!("ps.section_name='{}'", section_name));
+                } else {
+                    t_str.push_str(&format!("ps.section_name='{}' or ", section_name));
+                }
+            }
+            t_str
+        };
+
+        let sql = format!(
+            r"select
+                pt.post_id,
+                pt.post_title,
+                left(pt.post_content,
+                100) post_summary,
+                pt.post_time,
+                pt.post_update_time,
+                ut.user_name,
+                ut.user_nickname,
+                ut.avatar,
+                ps.section_name,
+                ps.section_name_zh,
+                count(ct.comment_id) comment_count
+            from
+                post_table pt
+            left join user_table ut on
+                pt.user_id = ut.user_id
+            left join post_section ps on
+                ps.section_id = pt.section_id
+            left join comment_table ct on
+                ct.post_id = pt.post_id
+            where
+                ({})
+            group by
+                pt.post_id
+            order by
+                char_length(post_title) asc,
+                char_length(post_content) asc,
+                post_time desc",
+            section_condition
+        );
+
+        DaoError::from_mysql_res(conn.query(sql))
     }
 }
 

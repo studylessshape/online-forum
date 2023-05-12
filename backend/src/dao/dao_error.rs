@@ -1,5 +1,7 @@
 use std::{error::Error as StdError, fmt};
 
+pub type DaoResult<T> = Result<T, DaoError>;
+
 #[derive(Debug)]
 pub enum DaoErrorCode {
     MysqlError(mysql::Error),

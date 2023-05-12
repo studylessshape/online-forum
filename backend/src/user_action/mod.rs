@@ -1,8 +1,9 @@
 use actix_web::web::{self, ServiceConfig};
 
-use self::{email_action::*, user_profiles::*, user_sign_in::*, user_sign_up::*};
+use self::{email_action::*, forum_manage::*, user_profiles::*, user_sign_in::*, user_sign_up::*};
 
 pub mod email_action;
+pub mod forum_manage;
 pub mod user_profiles;
 pub mod user_sign_in;
 pub mod user_sign_up;
@@ -42,6 +43,19 @@ pub fn config_user_action(cfg: &mut ServiceConfig) {
                             .service(web::resource("/get").route(web::get().to(get_user_posts)))
                             .service(web::resource("/del").route(web::post().to(del_user_posts))),
                     ),
+            ),
+    )
+    .service(
+        web::scope("/manage")
+            .service(
+                web::scope("/user")
+                    .service(web::resource("/get").route(web::get().to(get_users)))
+                    .service(web::resource("/del").route(web::post().to(del_users))),
+            )
+            .service(
+                web::scope("/post")
+                    .service(web::resource("/get").route(web::get().to(get_posts)))
+                    .service(web::resource("/del").route(web::post().to(del_posts))),
             ),
     );
 }

@@ -92,13 +92,16 @@ export default {
             return !$.isEmptyObject(Cookies.get(cookieName.token));
         },
         displayName() {
-            return !($.isEmptyObject(this.user_nickname)) && this.user_nickname != '' && this.user_nickname != 'null' ? this.user_nickname : this.username;
+            return !($.isEmptyObject(this.user_nickname)) && this.user_nickname != '' && this.user_nickname != 'null' ? this.user_nickname : this.curUsername;
         },
         section() {
             return sectionName;
         },
         isSearchRoute() {
             return this.$route.name == 'search';
+        },
+        curUsername() {
+            return cookieWatch.getCookie(cookieName.username);
         }
     },
     watch: {
@@ -163,7 +166,11 @@ export default {
                                 <h6 class="dropdown-header">{{ displayName }}</h6>
                             </li>
                             <li>
-                                <RouterLink class="dropdown-item" :to="userProfilesUrl(username)" role="button">个人中心
+                                <RouterLink class="dropdown-item" :to="userProfilesUrl(curUsername)" role="button">个人中心
+                                </RouterLink>
+                            </li>
+                            <li v-if="curUsername == 'root'">
+                                <RouterLink class="dropdown-item" to="/manage" role="button">论坛管理
                                 </RouterLink>
                             </li>
                             <li>

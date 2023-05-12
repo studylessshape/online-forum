@@ -97,7 +97,7 @@ impl SectionStatus {
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct SectionName {
-    section_name: String,
+    pub section_name: String,
 }
 
 impl SectionName {

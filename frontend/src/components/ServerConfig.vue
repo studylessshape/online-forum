@@ -60,6 +60,12 @@ const filePath = {
     uploadImage: "/files/image",
     uploadFiles: "/files/upload",
 }
+const managePath = {
+    userGet: "/manage/user/get",
+    userDel: "/manage/user/del",
+    sectionPostGet: "/manage/post/get",
+    sectionPostDel: "/manage/post/del",
+}
 /**
  * 
  * @param {String} section 
@@ -100,6 +106,7 @@ export {
     sectionName,
     filePath,
     postPath,
+    managePath,
     getUrl,
     getSectionRoute,
     sectionNameZh,

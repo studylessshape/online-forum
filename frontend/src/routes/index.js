@@ -5,6 +5,7 @@ import { cookieName } from '../components/ServerConfig.vue';
 
 const routes = [
     { path: '/', component: () => import("@/routes/Home.vue"), name: "home", meta: {title: "泰格论坛"}},
+    { path: '/manage', name: 'manage', component: () => import("@/routes/Manage.vue"), meta: {title: "论坛管理 - 泰格论坛"}},
     { path: '/section/:section_name', name: 'section', component: () => import("@/routes/Section.vue")},
     { path: '/section/:section_name/:post_id', component: () => import("@/routes/Post.vue") },
     { path: '/post/post-add/:section_name', component: () => import("@/routes/PostEdit.vue"), meta: {title: "添加帖子 - 泰格论坛"}},

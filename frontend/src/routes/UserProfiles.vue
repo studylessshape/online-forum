@@ -263,7 +263,7 @@ export default {
                 mode: "cors",
                 credentials: "include",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ all_post_id: this.userPostsTableSelect })
+                body: JSON.stringify({ post_id: this.userPostsTableSelect })
             }).then(response => response.json())
                 .then(data => {
                     if (data.success) {

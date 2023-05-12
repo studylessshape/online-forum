@@ -25,7 +25,7 @@
 ## 行为表
 |行为|路径|方法|前端发送数据|后台返回数据|数据项说明|
 |---|---|---|---|---|---|
-|申请邮箱验证码|`/user/require-email-code`|`POST`|`{"email":String, ["check_user_rule":'no-check' | 'no-exist' | 'is-exist']}`|`{"message":String} | {"responseText":String}`|`check_user_rule`，设置检查用户邮箱时的规则，默认为不检查，直接发送邮件；'no-exist' 只有在检查不存在时才会发送邮件；'is-exist' 只有在检查存在时才会发送邮件。成功发送会返回 `{"message":String}`，否则返回 `{"responseText":String}`|
+|申请邮箱验证码|`/user/require-email-code`|`POST`|`{"email":String, ["check_user_rule":'no-check' / 'no-exist' / 'is-exist']}`|`{"message":String} / {"responseText":String}`|`check_user_rule`，设置检查用户邮箱时的规则，默认为不检查，直接发送邮件；'no-exist' 只有在检查不存在时才会发送邮件；'is-exist' 只有在检查存在时才会发送邮件。成功发送会返回 `{"message":String}`，否则返回 `{"responseText":String}`|
 |检查邮箱验证码|`/user/check-email-code`|`POST`|`{"email":String, "code":Number, ["delete_code":bool]}`|`{"success":bool, ["responseText":String]}`|`delete_code` 表示是否在检查验证码后删除该验证码，默认为 `false`|
 |注册|`/user/sign-up`|`POST`|`{"user_name":String, "email":String, "code":Number,"password":String }`|`{"user":{"user_name":String, "user_nickname":String, "avatar":String, "token":String}}` 或 `{"error":[]}`|`error` 中存储出现错误的用户字段，出现用户字段错误一般情况下为数据重复，特殊情况下会有 `unknow` 错误|
 |登录|`/user/sign-in`|`POST`|`{"name":String, "password":String}`|`{"user":{"user_name":String, "user_nickname":String, "avatar":String, "token":String}}`|`name` 可以为用户名，也可以是邮箱|
@@ -34,9 +34,9 @@
 |更新昵称|`/user/profiles/update/nickname`|`GET`|`?user_nickname=<name>`|`{"user_nickname":String}`|返回新的昵称，返回类型为 `json`|
 |更新昵称和简介|`/user/profiles/update/profiles`|`GET`|`?user_nickname={name}&description={description}`|`{"user_nickname":String, "description":String}`|返回新的昵称和简介，返回类型为 `json`|
 |更新头像|`/user/profiles/update/avatar/{filename}`|`POST`|`FormData: {file: File}`|`{"avatar":String}`|返回新的头像链接，返回类型为 `json`|
-|更新密码|`/user/profiles/update/password`|`POST`|`{"email":String, "code":i32, "password":String}`|`{"message":String} | {"responseText":String}`|返回是否修改成功，修改成功，则返回 `{"message":String}`，否则返回 `{"responseText":String}`|
+|更新密码|`/user/profiles/update/password`|`POST`|`{"email":String, "code":i32, "password":String}`|`{"message":String} / {"responseText":String}`|返回是否修改成功，修改成功，则返回 `{"message":String}`，否则返回 `{"responseText":String}`|
 |获取用户发布的所有帖子|`/user/profiles/posts/get`|`get`|`?user_name=`|`{"posts":[{"post_id":Number,"post_title":String, "post_summary":String, "section_name":String, "section_name_zh":String, "post_time":String, "post_update_time":String, "comment_count":Number}]}`|因为为同一用户，所以返回中不带发帖用户信息|
-|删除用户发布的帖子|`/user/profiles/posts/del`|`post`|`{"all_post_id":Vec<i32>}`|`{"success":Boolean, ["responseText":String]}`|当出现错误或 `success` 的值为 `false` 时，返回的数据中会带有 `responseText`|
+|删除用户发布的帖子|`/user/profiles/posts/del`|`post`|`{"post_id":Vec<i32>}`|`{"success":Boolean, ["responseText":String]}`|当出现错误或 `success` 的值为 `false` 时，返回的数据中会带有 `responseText`|
 
 ## 流程图
 ```mermaid
