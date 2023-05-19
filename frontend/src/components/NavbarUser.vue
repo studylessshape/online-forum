@@ -105,12 +105,12 @@ export default {
 
             // 发送数据给后端
             fetch(getUrl(userPath.signIn), {
-                method: 'POST',
-                mode: 'cors',
+                method: 'POST', // post 方法
+                mode: 'cors', // 设置请求为跨域请求
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ name: name, password: pwd })
+                body: JSON.stringify({ name: name, password: pwd }) // 用户的登录信息
             }).then(response => response.json())
                 .then(data => {
                     if (data.user) {
@@ -123,6 +123,7 @@ export default {
                     } else {
                         $("#sign-in-panel").addClass("is-invalid");
                     }
+                    // 恢复按钮设置
                     recoveryFn();
                 }
                 ).catch(error => {

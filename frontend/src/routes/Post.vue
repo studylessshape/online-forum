@@ -5,6 +5,7 @@ import { getUrl, postPath } from "../components/ServerConfig.vue";
 import { displaySqlDatetime } from "../components/Utils.vue";
 import Cookies from "js-cookie";
 import MdEditor from "md-editor-v3";
+import MdEditorForComment from "md-editor-v3";
 import "md-editor-v3/lib/style.css";
 import Pagination from "../components/Pagination.vue";
 import { marked } from 'marked';
@@ -15,6 +16,7 @@ export default {
     RouterLink,
     MdEditor,
     Pagination,
+    MdEditorForComment
   },
   data() {
     return {
@@ -290,7 +292,7 @@ export default {
               </div>
             </div>
             <div class="col-lg-10 ps-2 border-start pb-3" id="post-content">
-              <MdEditor v-model="post.post_content" preview-only id="post-content"></MdEditor>
+              <MdEditor v-model="post.post_content" preview-only key="post-content"></MdEditor>
             </div>
           </div>
           <div class="border-top pt-2 row justify-content-end">
@@ -396,9 +398,9 @@ export default {
         <!-- 发布评论区 -->
         <el-main v-if="canComment" class="d-flex justify-content-end flex-wrap" id="comment-editor"
           v-loading="inPublishComment">
-          <MdEditor v-model="commentConent" :toolbars="commentEditorToolbars" :preview="false" :html-preview="false"
-            placeholder="输入评论内容" style="height: 200px" :footers="['markdownTotal']" id="comment-editor">
-          </MdEditor>
+          <MdEditorForComment v-model="commentConent" :toolbars="commentEditorToolbars" :preview="false" :html-preview="false"
+            placeholder="输入评论内容" style="height: 200px" :footers="['markdownTotal']" key="comment-editor">
+          </MdEditorForComment>
           <el-button type="primary" plain @click="publishComment">发布评论</el-button>
         </el-main>
       </div>
@@ -419,5 +421,11 @@ export default {
 }
 .el-p-0 {
   --el-main-padding: 0;
+}
+
+img {
+  max-width: 300px;
+  max-height: 300px;
+  overflow: hidden;
 }
 </style>

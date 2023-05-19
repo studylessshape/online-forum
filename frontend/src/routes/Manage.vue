@@ -1,5 +1,6 @@
 <script>
-import { getUrl, managePath, sectionName, sectionNameZh } from '../components/ServerConfig.vue';
+import { getUrl, managePath, sectionName, sectionNameZh, cookieName } from '../components/ServerConfig.vue';
+import Cookies from 'js-cookie';
 import CommentDisabed from '../components/icons/OutLineCommentDisabed.vue';
 import { displaySqlDatetime, displayDate } from '../components/Utils.vue';
 import { ElMessage } from 'element-plus';
@@ -175,6 +176,10 @@ export default {
         },
     },
     mounted() {
+        if (!Cookies.get(cookieName.token) || Cookies.get(cookieName.username) != 'root') {
+            alert("您不是管理员！");
+            this.$router.push("/");
+        }
         this.getUsers();
     }
 }

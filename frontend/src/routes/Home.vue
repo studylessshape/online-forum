@@ -121,9 +121,11 @@ export default {
     <div class="my-3 p-3 bg-body rounded shadow-sm">
       <h6 class="border-bottom pb-2 mb-0">最新通告</h6>
       <div class="d-flex text-muted pt-3 flex-column" id="lastest-notify">
+        <!-- 如果没有获取到则显示暂无通告 -->
         <div class="pb-3 mb-0 small lh-sm border-bottom" v-if="!notify_content">
           <strong class="d-block text-gray-dark">暂无通告</strong>
         </div>
+        <!-- 获取成功则显示内容 -->
         <div class="pb-3 mb-0 pt-1 small lh-sm border-bottom" v-else>
           <MdEditor v-model="notify_content" preview-only></MdEditor>
         </div>
