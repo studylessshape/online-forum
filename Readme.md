@@ -10,6 +10,8 @@
 ## 后端
 - [rust](https://www.rust-lang.org/zh-CN/)：主要使用了 [actix-web](https://actix.rs/) 框架，其他用到的都在 [cargo.toml](./backend/Cargo.toml) 里
 
+> 后端和前端依赖的所有的库都可以从[这里](https://github.com/studylessshape/online-forum/network/dependencies)查看，包含了不少没有直接使用的库，所以比较多也比较杂，前端看 [package.json](./frontend/package.json)比较好，后端则是 [cargo.toml](./backend/Cargo.toml)。
+
 ## 数据库
 数据库使用的 [mysql](https://www.mysql.com/cn/)。
 
@@ -68,14 +70,21 @@ db_name = "online_forum"
 参考配置：
 ```toml
 port = 8082
-allow_origins = ["http://localhost:5173"]
-allow_methods = ["GET", "POST"]
+allow_origins = ["http://localhost:5173", "http://localhost", "http://192.168.187.24"]
+allow_methods = ["POST", "GET"]
 admin_password = "123456789"
 
 [email_account]
 email = "*@outlook.com"
 password = "*"
 smtp_server = "smtp.office365.com"
+
+[database_config]
+name = "admin"
+password = "123456789"
+ip_or_host = "localhost"
+port = 3306
+db_name = "online_forum"
 ```
 
 ### 前端配置
@@ -96,3 +105,21 @@ window.server = {
 **注意：**
 
 后端对外域来源非常敏感，如果后端配置的外域为地址或域名为 `localhost`，而前端配置的 `host` 为本机的 ip 地址（即非 `localhost` 和 `127.0.0.1`），那么后端在收到跨域请求时，容易出现无法得到 `Cookie` 的情况。
+
+## 启动
+前面的配置如果没有问题，则可以尝试启动程序。
+
+建议先启动后端。启动指令如下：
+```sh
+cargo run
+```
+
+启动时，会提示管理员用户的账户密码。如果配置有错误，在控制台中也会有相应的提示。
+
+然后启动前端。前端启动方式较多，这里仅提供 `vite` 启动：
+```sh
+npm install
+npm run dev
+```
+
+前端启动后，会提示一个链接，打开这个链接进入前端，就可以开始使用了。
