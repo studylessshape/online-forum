@@ -66,16 +66,13 @@ CREATE TABLE `comment_table` (
     `comment_id` int NOT NULL AUTO_INCREMENT,
     `post_id` int NOT NULL,
     `user_id` int unsigned NOT NULL,
-    `reply_to` int DEFAULT NULL,
     `comment_time` datetime NOT NULL,
     `comment_content` text NOT NULL,
     PRIMARY KEY (`comment_id`),
     KEY `comment_table_FK` (`user_id`),
     KEY `comment_table_FK_1` (`post_id`),
-    KEY `comment_table_FK_2` (`reply_to`),
     CONSTRAINT `comment_table_FK` FOREIGN KEY (`user_id`) REFERENCES `user_table` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `comment_table_FK_1` FOREIGN KEY (`post_id`) REFERENCES `post_table` (`post_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `comment_table_FK_2` FOREIGN KEY (`reply_to`) REFERENCES `comment_table` (`comment_id`)
+    CONSTRAINT `comment_table_FK_1` FOREIGN KEY (`post_id`) REFERENCES `post_table` (`post_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb3;
 
 -- insert auth
