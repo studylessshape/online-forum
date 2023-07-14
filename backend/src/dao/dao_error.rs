@@ -26,7 +26,7 @@ impl fmt::Display for DaoError {
             DaoErrorCode::Unknown => "Ouccr unknow error".to_string(),
             DaoErrorCode::Message(str) => String::from(str),
         };
-        write!(f, "DaoError [{message}]")
+        write!(f, "DaoError [{}]", message)
     }
 }
 
