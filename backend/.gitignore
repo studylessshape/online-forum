@@ -1,3 +1,4 @@
 /target
 /static
 **/**/server.conf.toml
+Cargo.lock
