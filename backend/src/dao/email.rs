@@ -25,9 +25,9 @@ impl Default for EmailCodeCheckUserRule {
 }
 
 impl GetEmailCodeRequest {
-    const NO_CHECK: &str = "no-check";
-    const NO_EXIST: &str = "no-exist";
-    const IS_EXIST: &str = "is-exist";
+    const NO_CHECK: &'static str = "no-check";
+    const NO_EXIST: &'static str = "no-exist";
+    const IS_EXIST: &'static str = "is-exist";
 
     pub fn get_user_rule(&self) -> EmailCodeCheckUserRule {
         match &self.check_user_rule {

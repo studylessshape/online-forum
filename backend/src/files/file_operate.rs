@@ -9,16 +9,16 @@ pub struct ResourceFilePath {
 }
 
 impl ResourceFilePath {
-    const IMAGE_SUFFIX: [&str; 8] = ["png", "jpg", "jpeg", "gif", "bmp", "tiff", "webp", "svg"];
-    const TEXT_SUFFIX: [&str; 2] = ["txt", "md"];
-    const BINARY_SUFFIX: [&str; 2] = ["exe", "dat"];
-    const COMPRESSED_SUFFIX: [&str; 4] = ["7z", "zip", "rar", "gz"];
+    const IMAGE_SUFFIX: [&'static str; 8] = ["png", "jpg", "jpeg", "gif", "bmp", "tiff", "webp", "svg"];
+    const TEXT_SUFFIX: [&'static str; 2] = ["txt", "md"];
+    const BINARY_SUFFIX: [&'static str; 2] = ["exe", "dat"];
+    const COMPRESSED_SUFFIX: [&'static str; 4] = ["7z", "zip", "rar", "gz"];
 
-    const IMAGE_PATH: &str = "./static/resources/image";
-    const TEXT_PATH: &str = "./static/resources/text";
-    const BINARY_PATH: &str = "./static/resources/binary";
-    const COMPRESSED_PATH: &str = "./static/resources/compressed";
-    const UNKNOW_PATH: &str = "./static/resources/unknow";
+    const IMAGE_PATH: &'static str = "./static/resources/image";
+    const TEXT_PATH: &'static str = "./static/resources/text";
+    const BINARY_PATH: &'static str = "./static/resources/binary";
+    const COMPRESSED_PATH: &'static str = "./static/resources/compressed";
+    const UNKNOW_PATH: &'static str = "./static/resources/unknow";
 
     fn dir_check() {
         let _ = fs::create_dir_all(Self::IMAGE_PATH);

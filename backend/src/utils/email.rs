@@ -1,4 +1,4 @@
-use crate::{dao::email::EmailCode, server::SERVER_CONFIGURATION};
+use crate::{dao::{dao_error::DaoError, email::EmailCode}, server::SERVER_CONFIGURATION};
 use lettre::{transport::smtp::authentication::Credentials, Message, SmtpTransport, Transport};
 use std::error::Error;
 
@@ -13,7 +13,9 @@ pub fn send_email_code(email_code: EmailCode) -> Result<impl Send, Box<dyn Error
         .unwrap();
 
     let email_account = &SERVER_CONFIGURATION.lock().unwrap().email_account;
-
+    if !email_account.is_valid() {
+        return Err(DaoError::message("Haven't vaild email account!").into());
+    }
     let creds = Credentials::new(email_account.email.clone(), email_account.password.clone());
 
     let emailer = SmtpTransport::starttls_relay(&email_account.smtp_server)

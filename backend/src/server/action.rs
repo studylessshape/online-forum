@@ -52,7 +52,7 @@ pub fn read_config() -> Option<ServerConfiguration> {
             "Please config your email and password in file `{}`",
             SERVER_CONFIGURATION_PATH
         );
-        return None;
+        log::warn!("It will can't use the features of regist, forget-password or modify-password without email");
     }
     // test the database config
     {
